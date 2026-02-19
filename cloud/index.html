@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Weather Monitoring Dashboard</title>
+        <style>
+            body{
+                font-family: Arial, Helvetica, sans-serif;
+                background: #f4f6f8;
+                padding: 40px;
+            }
+            h1{
+                text-align: center;
+            }
+            .card{
+                max-width: 400px;
+                margin: auto;
+                background: wheat;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .item{
+                margin: 15px 0;
+                font-size: 18px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Weather Monitoring Dashboard</h1>
+        <div class="card">
+            <div class="item">
+                Avg Temperature: <span id="temp">--</span> C
+            </div>
+            <div class="item">
+                Total Rainfall: <span id="rain">--</span> mm
+            </div>
+            <div class="item">
+                Total Samples: <span id="samples">--</span>
+            </div>
+            <div class="item">
+                Last Updated: <span id="time">--</span>
+            </div>
+        </div> 
+        <script>
+            async function fetchStats() 
+            {
+                try{
+                    const res = await fetch("/global_stats");
+                    const data = await res.json();
+                    if(data.message){
+                        return;
+                    }
+                    document.getElementById("temp").innerText = data.city_avg_temperature;
+                    document.getElementById("rain").innerText = data.city_total_rainfall;
+                    document.getElementById("samples").innerText = data.total_samples;
+                    const date = new Date(data.last_updated * 1000);
+                    document.getElementById("time").innerText = date.toLocaleTimeString();
+                }
+                catch(err){
+                    console.error(err);
+                }
+            }
+            fetchStats();
+            setInterval(fetchStats, 10000);
+            </script>
+       </body>
+</html>
